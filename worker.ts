@@ -10,18 +10,20 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
-    // 1. Health check endpoint
+    // 1. Health check & keep-alive endpoint
     if (url.pathname === '/api/health') {
       return new Response(
         JSON.stringify({
           status: 'online',
           service: 'Umrah Taxi Cloudflare Worker',
+          warm: true,
           timestamp: new Date().toISOString(),
         }),
         {
           headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
+            'Cache-Control': 'no-store',
           },
         }
       );
@@ -60,5 +62,30 @@ export default {
 
     // 3. Fallback: Serve static assets (Next.js HTML/JS/CSS)
     return env.ASSETS.fetch(request);
+  },
+
+  // 4. Cloudflare Cron Trigger (Runs every 5 minutes to prevent cold starts / sleep)
+  async scheduled(
+    event: { cron: string; scheduledTime: number },
+    env: Env,
+    ctx: { waitUntil: (promise: Promise<any>) => void }
+  ): Promise<void> {
+    const timeStr = new Date(event.scheduledTime).toISOString();
+    console.log(`[Keep-Alive Cron] Triggered at ${timeStr} via pattern: ${event.cron}`);
+
+    const warmupTask = async () => {
+      try {
+        const res = await fetch('https://umrah-taxi-web.umrahproj.workers.dev/api/health');
+        console.log(`[Keep-Alive Cron] Ping response status: ${res.status}`);
+      } catch (err: any) {
+        console.log(`[Keep-Alive Cron] Ping executed: ${err.message}`);
+      }
+    };
+
+    if (ctx && typeof ctx.waitUntil === 'function') {
+      ctx.waitUntil(warmupTask());
+    } else {
+      await warmupTask();
+    }
   },
 };
