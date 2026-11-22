@@ -1,0 +1,48 @@
+name: Anti-Sleep KeepAlive Cron
+
+on:
+  schedule:
+    # Runs every 5 minutes automatically 24/7/365 in GitHub Cloud
+    - cron: '*/5 * * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+  push:
+    branches:
+      - main
+
+jobs:
+  keepalive-ping:
+    name: Ping Cloudflare Worker & Supabase
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Cloudflare Worker Keep-Alive Endpoint
+        run: |
+          echo "=================================================="
+          echo "Executing Anti-Sleep Ping to Cloudflare Worker..."
+          echo "Timestamp: $(date -u)"
+          
+          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" https://umrah-taxi-web.umrahproj.workers.dev/api/ping)
+          echo "$RESPONSE"
+          
+          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS" | cut -d':' -f2)
+          if [ "$HTTP_STATUS" -eq 200 ]; then
+            echo "✅ Cloudflare Worker is ALIVE and WARM!"
+          else
+            echo "⚠️ Worker returned status: $HTTP_STATUS"
+          fi
+
+      - name: Ping Supabase Database Gateway
+        run: |
+          echo "=================================================="
+          echo "Executing Anti-Pause Ping to Supabase PostgreSQL..."
+          echo "Timestamp: $(date -u)"
+          
+          # Pinging the Supabase REST endpoint keeps the project awake and prevents 7-day auto-pause
+          SB_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -I https://lbfmxgnxihujjcrzhjzn.supabase.co/rest/v1/)
+          echo "Supabase Response Status Code: $SB_RESPONSE"
+          
+          if [ "$SB_RESPONSE" -eq 401 ] || [ "$SB_RESPONSE" -eq 200 ]; then
+            echo "✅ Supabase project is ACTIVE and AWAKE!"
+          else
+            echo "ℹ️ Supabase response code: $SB_RESPONSE"
+          fi
+          echo "=================================================="
