@@ -4,16 +4,25 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Phone, MessageSquare, Menu, X, ShieldCheck } from 'lucide-react';
 
-export function Navbar() {
+interface NavbarProps {
+  hotline?: string;
+  companyName?: string;
+  tgaText?: string;
+}
+
+export function Navbar({
+  hotline = '966591206299',
+  companyName = 'Umrah Taxi Online',
+  tgaText = 'Saudi TGA Compliant Chauffeurs • 0 Advance Payment • Free Miqat Stopover',
+}: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const hotline = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '966591206299';
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-xs">
-      {/* Top Banner */}
+      {/* Dynamic Top Banner */}
       <div className="bg-amber-500 text-gray-950 px-4 py-1.5 text-xs font-semibold text-center flex items-center justify-center gap-2">
         <ShieldCheck className="w-4 h-4" />
-        <span>Saudi TGA Compliant Chauffeurs • 0 Advance Payment • Free Miqat Stopover</span>
+        <span>{tgaText}</span>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,7 +34,7 @@ export function Navbar() {
             </div>
             <div>
               <span className="text-xl font-extrabold text-gray-900 tracking-tight">
-                Umrah Taxi <span className="text-amber-600">Online</span>
+                {companyName.split(' ')[0]} <span className="text-amber-600">{companyName.split(' ').slice(1).join(' ')}</span>
               </span>
               <span className="block text-[10px] font-medium text-gray-500 uppercase tracking-widest">
                 Private Pilgrim Transfers

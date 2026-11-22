@@ -4,9 +4,19 @@ import React from 'react';
 import Link from 'next/link';
 import { Phone, Mail, MapPin, ShieldCheck, Heart } from 'lucide-react';
 
-export function Footer() {
-  const hotline = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '966591206299';
+interface FooterProps {
+  hotline?: string;
+  address?: string;
+  email?: string;
+  companyName?: string;
+}
 
+export function Footer({
+  hotline = '966591206299',
+  address = 'Ash Shubaikah, Makkah 24231, Kingdom of Saudi Arabia (Near Haram)',
+  email = 'dispatch@umrahtaxionline.com',
+  companyName = 'Umrah Taxi Online',
+}: FooterProps) {
   return (
     <footer className="bg-gray-950 text-gray-300 pt-16 pb-12 border-t border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,7 +28,7 @@ export function Footer() {
                 UT
               </div>
               <span className="text-xl font-extrabold text-white">
-                Umrah Taxi <span className="text-amber-500">Online</span>
+                {companyName.split(' ')[0]} <span className="text-amber-500">{companyName.split(' ').slice(1).join(' ')}</span>
               </span>
             </div>
             <p className="text-xs text-gray-400 leading-relaxed">
@@ -96,7 +106,7 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Col 4: Contact HQ */}
+          {/* Col 4: Dynamic Contact HQ from Supabase */}
           <div>
             <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4">
               Contact & HQ
@@ -104,7 +114,7 @@ export function Footer() {
             <ul className="space-y-3 text-xs text-gray-400">
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
-                <span>Ash Shubaikah, Makkah 24231, Kingdom of Saudi Arabia (Near Haram)</span>
+                <span>{address}</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-amber-500 flex-shrink-0" />
@@ -114,14 +124,14 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                <span>dispatch@umrahtaxionline.com</span>
+                <span>{email}</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
-          <p>© 2026 Umrah Taxi Online. All rights reserved.</p>
+          <p>© 2026 {companyName}. All rights reserved.</p>
           <p className="flex items-center gap-1">
             Built for Umrah & Hajj Pilgrims with <Heart className="w-3.5 h-3.5 text-red-500 fill-current" />
           </p>

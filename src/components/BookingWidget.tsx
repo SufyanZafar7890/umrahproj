@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Route, Vehicle } from '@/types/database';
+import React, { useState, useEffect } from 'react';
+import { Route, Vehicle, RoutePricing } from '@/types/database';
 import { constructWhatsAppLink } from '@/lib/whatsapp';
 import {
   MapPin,
@@ -12,15 +12,22 @@ import {
   MessageSquare,
   Sparkles,
   CheckCircle2,
-  Clock
+  Clock,
 } from 'lucide-react';
 
 interface BookingWidgetProps {
   routes: Route[];
   vehicles: Vehicle[];
+  pricing?: RoutePricing[];
+  whatsappNumber?: string;
 }
 
-export function BookingWidget({ routes, vehicles }: BookingWidgetProps) {
+export function BookingWidget({
+  routes,
+  vehicles,
+  pricing = [],
+  whatsappNumber,
+}: BookingWidgetProps) {
   const [selectedRouteId, setSelectedRouteId] = useState<string>(routes[0]?.id || '');
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>(vehicles[0]?.id || '');
   const [travelDate, setTravelDate] = useState<string>('');
@@ -33,7 +40,7 @@ export function BookingWidget({ routes, vehicles }: BookingWidgetProps) {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showOptionalFields, setShowOptionalFields] = useState<boolean>(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const now = new Date();
     const today = now.toISOString().split('T')[0];
     setMinDate(today);
@@ -41,20 +48,42 @@ export function BookingWidget({ routes, vehicles }: BookingWidgetProps) {
     setTravelDate(tomorrow);
   }, []);
 
+  useEffect(() => {
+    if (routes.length > 0 && !selectedRouteId) {
+      setSelectedRouteId(routes[0].id);
+    }
+  }, [routes, selectedRouteId]);
+
+  useEffect(() => {
+    if (vehicles.length > 0 && !selectedVehicleId) {
+      setSelectedVehicleId(vehicles[0].id);
+    }
+  }, [vehicles, selectedVehicleId]);
+
   const selectedRoute = routes.find((r) => r.id === selectedRouteId) || routes[0];
   const selectedVehicle = vehicles.find((v) => v.id === selectedVehicleId) || vehicles[0];
 
-  // Dynamic price calculation
-  const calculateFare = (): number => {
-    if (!selectedRoute) return 250;
-    const base = selectedRoute.base_price_sar;
+  // 100% Dynamic Pricing from Supabase Matrix
+  const getDynamicFare = (): number => {
+    if (!selectedRoute || !selectedVehicle) return 250;
+
+    // Look up exact match in Supabase route_pricing table
+    const exactMatch = pricing.find(
+      (p) => p.route_id === selectedRoute.id && p.vehicle_id === selectedVehicle.id
+    );
+    if (exactMatch && exactMatch.price_sar) {
+      return Number(exactMatch.price_sar);
+    }
+
+    // Fallback: Route base price with category ratio
+    const base = selectedRoute.base_price_sar || 250;
     if (selectedVehicle?.category === 'MPV') return Math.round(base * 1.35);
     if (selectedVehicle?.category === 'VIP SUV') return Math.round(base * 2.2);
     if (selectedVehicle?.category === 'Minibus') return Math.round(base * 1.7);
     return base;
   };
 
-  const calculatedFare = calculateFare();
+  const calculatedFare = getDynamicFare();
 
   const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,14 +92,14 @@ export function BookingWidget({ routes, vehicles }: BookingWidgetProps) {
     setIsSubmitting(true);
 
     try {
-      // 1. Asynchronously persist lead to Next.js API / Supabase
+      // 1. Asynchronously log lead to Edge API / Supabase
       fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           route_id: selectedRoute.id,
           route_title: selectedRoute.title,
-          vehicle_name: selectedVehicle?.name || 'Standard Sedan',
+          vehicle_name: selectedVehicle?.name || 'Standard Vehicle',
           customer_name: customerName || 'Valued Pilgrim',
           customer_phone: customerPhone || 'WhatsApp Client',
           travel_date: travelDate,
@@ -81,7 +110,7 @@ export function BookingWidget({ routes, vehicles }: BookingWidgetProps) {
         }),
       }).catch((err) => console.warn('Lead logging skipped:', err));
 
-      // 2. Build WhatsApp intent URL
+      // 2. Build WhatsApp intent URL using dynamic settings
       const whatsappUrl = constructWhatsAppLink({
         routeTitle: selectedRoute.title,
         travelDate,
@@ -89,6 +118,7 @@ export function BookingWidget({ routes, vehicles }: BookingWidgetProps) {
         luggage,
         vehicleName: selectedVehicle?.name,
         estimatedPriceSar: calculatedFare,
+        phoneDispatch: whatsappNumber,
       });
 
       // 3. Open WhatsApp dispatch
@@ -279,8 +309,8 @@ export function BookingWidget({ routes, vehicles }: BookingWidgetProps) {
             </div>
           </div>
           <div className="text-right">
-            <span className="inline-block text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md">
-              Free Miqat Stop
+            <span className="text-xs font-bold bg-amber-200/80 text-amber-900 px-2.5 py-1 rounded-md">
+              Free Miqat Stop Included
             </span>
             <p className="text-[10px] text-gray-500 mt-0.5">Includes Tolls & Fuel</p>
           </div>

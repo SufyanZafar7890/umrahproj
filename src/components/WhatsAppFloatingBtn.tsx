@@ -3,8 +3,7 @@
 import React from 'react';
 import { MessageSquare } from 'lucide-react';
 
-export function WhatsAppFloatingBtn() {
-  const hotline = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '966591206299';
+export function WhatsAppFloatingBtn({ hotline = '966591206299' }: { hotline?: string }) {
   const defaultText = encodeURIComponent(
     'Assalam o Alaikum! I need Umrah taxi transfer assistance.'
   );

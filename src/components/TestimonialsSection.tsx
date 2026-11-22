@@ -1,8 +1,8 @@
 import React from 'react';
-import { TESTIMONIALS } from '@/data/mockData';
+import { Testimonial } from '@/types/database';
 import { Star, CheckCircle } from 'lucide-react';
 
-export function TestimonialsSection() {
+export function TestimonialsSection({ testimonials = [] }: { testimonials?: Testimonial[] }) {
   return (
     <section className="py-20 bg-gray-50/70 border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,33 +19,37 @@ export function TestimonialsSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {TESTIMONIALS.map((t, idx) => (
+          {testimonials.map((t, idx) => (
             <div
-              key={idx}
+              key={t.id || idx}
               className="p-8 rounded-3xl bg-white border border-gray-200/80 shadow-xs flex flex-col justify-between"
             >
               <div>
                 {/* Stars */}
                 <div className="flex items-center gap-1 text-amber-400 mb-4">
-                  {[...Array(t.rating)].map((_, i) => (
+                  {[...Array(t.rating || 5)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-current" />
                   ))}
                 </div>
 
                 <p className="text-gray-700 text-sm leading-relaxed italic">
-                  "{t.comment}"
+                  "{t.review_text}"
                 </p>
               </div>
 
               <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-gray-900">{t.name}</h3>
-                  <p className="text-xs text-gray-500">{t.country} • {t.date}</p>
+                  <p className="text-xs text-gray-500">
+                    {t.country} {t.trip_date ? `• ${t.trip_date}` : ''}
+                  </p>
                 </div>
-                <div className="flex items-center gap-1 text-emerald-600 text-xs font-semibold">
-                  <CheckCircle className="w-4 h-4" />
-                  <span>Verified</span>
-                </div>
+                {t.is_verified && (
+                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-semibold">
+                    <CheckCircle className="w-4 h-4" />
+                    <span>Verified</span>
+                  </div>
+                )}
               </div>
             </div>
           ))}
