@@ -11,6 +11,10 @@
       "*/5 * * * *"
     ]
   },
+  "vars": {
+    "SUPABASE_URL": "https://lbfmxgnxihujjcrzhjzn.supabase.co",
+    "SITE_URL": "https://umrah-taxi-web.umrahproj.workers.dev"
+  },
   "assets": {
     "directory": "./out"
   }
