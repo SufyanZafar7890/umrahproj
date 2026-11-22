@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "deploy": "next build && npx wrangler pages deploy out --project-name umrah-taxi-web",
+    "ship": "npm run build && git add . && git commit -m \"update\" && git push origin main && npx wrangler pages deploy out --project-name umrah-taxi-web"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
