@@ -1,8 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Phone, Mail, MapPin, ShieldCheck, Heart } from 'lucide-react';
+import { getSiteSettings } from '@/lib/supabase/data';
+import { cleanWhatsAppNumber } from '@/lib/whatsapp';
 
 interface FooterProps {
   hotline?: string;
@@ -12,11 +14,40 @@ interface FooterProps {
 }
 
 export function Footer({
-  hotline = '966591206299',
-  address = 'Ash Shubaikah, Makkah 24231, Kingdom of Saudi Arabia (Near Haram)',
-  email = 'dispatch@umrahtaxionline.com',
-  companyName = 'Umrah Taxi Online',
+  hotline: propHotline,
+  address: propAddress,
+  email: propEmail,
+  companyName: propCompanyName,
 }: FooterProps) {
+  const [hotline, setHotline] = useState<string>(() => {
+    if (propHotline) return cleanWhatsAppNumber(propHotline);
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = window.localStorage.getItem('umrah_cached_site_settings');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.whatsapp_number) return cleanWhatsAppNumber(parsed.whatsapp_number);
+        }
+      } catch (e) {}
+    }
+    return '923086819634';
+  });
+
+  const [address, setAddress] = useState(
+    propAddress || 'Ash Shubaikah, Makkah 24231, Kingdom of Saudi Arabia (Near Haram)'
+  );
+  const [email, setEmail] = useState(propEmail || 'dispatch@umrahtaxionline.com');
+  const [companyName, setCompanyName] = useState(propCompanyName || 'Umrah Taxi Online');
+
+  useEffect(() => {
+    getSiteSettings().then((s) => {
+      if (s.whatsapp_number && !propHotline) setHotline(cleanWhatsAppNumber(s.whatsapp_number));
+      if (s.hq_address && !propAddress) setAddress(s.hq_address);
+      if (s.support_email && !propEmail) setEmail(s.support_email);
+      if (s.company_name && !propCompanyName) setCompanyName(s.company_name);
+    });
+  }, [propHotline, propAddress, propEmail, propCompanyName]);
+
   return (
     <footer className="bg-gray-950 text-gray-300 pt-16 pb-12 border-t border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

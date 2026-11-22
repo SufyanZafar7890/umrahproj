@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Route, Vehicle, RoutePricing } from '@/types/database';
-import { constructWhatsAppLink } from '@/lib/whatsapp';
+import { constructWhatsAppLink, cleanWhatsAppNumber } from '@/lib/whatsapp';
 import { getSiteSettings } from '@/lib/supabase/data';
 import {
   MapPin,
@@ -113,11 +113,11 @@ export function BookingWidget({
       }).catch((err) => console.warn('Lead logging skipped:', err));
 
       // Fetch latest updated WhatsApp number dynamically from Supabase
-      let activeWhatsapp = whatsappNumber;
+      let activeWhatsapp = cleanWhatsAppNumber(whatsappNumber);
       try {
         const latestSettings = await getSiteSettings();
         if (latestSettings?.whatsapp_number) {
-          activeWhatsapp = latestSettings.whatsapp_number;
+          activeWhatsapp = cleanWhatsAppNumber(latestSettings.whatsapp_number);
         }
       } catch (err) {
         console.warn('Fallback to prop whatsapp number:', err);

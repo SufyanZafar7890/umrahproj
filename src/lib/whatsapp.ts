@@ -8,8 +8,15 @@ export interface WhatsAppBookingPayload {
   phoneDispatch?: string;
 }
 
+export function cleanWhatsAppNumber(num?: string): string {
+  if (!num) return '923086819634';
+  const cleaned = num.replace(/[^0-9]/g, '');
+  return cleaned || '923086819634';
+}
+
 export function constructWhatsAppLink(payload: WhatsAppBookingPayload): string {
-  const phone = payload.phoneDispatch || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '966591206299';
+  const rawPhone = payload.phoneDispatch || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '923086819634';
+  const phone = cleanWhatsAppNumber(rawPhone);
 
   const lines = [
     '🕋 *Assalam o Alaikum | Umrah Taxi Booking Request*',
@@ -40,3 +47,20 @@ export function constructWhatsAppLink(payload: WhatsAppBookingPayload): string {
   // Desktop Web Fallback
   return `https://api.whatsapp.com/send?phone=${phone}&text=${encodedText}`;
 }
+
+export function openWhatsAppChat(phone?: string, text?: string) {
+  const targetPhone = cleanWhatsAppNumber(phone);
+  const defaultText = text || 'Assalam o Alaikum! I would like to inquire about Umrah Taxi service.';
+  const encodedText = encodeURIComponent(defaultText);
+
+  if (typeof window !== 'undefined') {
+    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+    const url = isMobile
+      ? `whatsapp://send?phone=${targetPhone}&text=${encodedText}`
+      : `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodedText}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+}
+

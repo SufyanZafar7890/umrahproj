@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Vehicle } from '@/types/database';
 import { Users, Briefcase, Check, MessageSquare } from 'lucide-react';
-import { constructWhatsAppLink } from '@/lib/whatsapp';
+import { constructWhatsAppLink, cleanWhatsAppNumber } from '@/lib/whatsapp';
 import { getSiteSettings } from '@/lib/supabase/data';
 
 export function FleetSection({
@@ -13,14 +13,26 @@ export function FleetSection({
   vehicles: Vehicle[];
   whatsappNumber?: string;
 }) {
-  const [activeNumber, setActiveNumber] = useState(propNumber || '966591206299');
+  const [activeNumber, setActiveNumber] = useState<string>(() => {
+    if (propNumber) return cleanWhatsAppNumber(propNumber);
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = window.localStorage.getItem('umrah_cached_site_settings');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.whatsapp_number) return cleanWhatsAppNumber(parsed.whatsapp_number);
+        }
+      } catch (e) {}
+    }
+    return '923086819634';
+  });
 
   useEffect(() => {
     if (propNumber) {
-      setActiveNumber(propNumber);
+      setActiveNumber(cleanWhatsAppNumber(propNumber));
     } else {
       getSiteSettings().then((s) => {
-        if (s.whatsapp_number) setActiveNumber(s.whatsapp_number);
+        if (s.whatsapp_number) setActiveNumber(cleanWhatsAppNumber(s.whatsapp_number));
       });
     }
   }, [propNumber]);

@@ -29,8 +29,8 @@ export interface SiteSettingsMap {
 }
 
 export const DEFAULT_SETTINGS: SiteSettingsMap = {
-  whatsapp_number: '966591206299',
-  phone_number: '966591206299',
+  whatsapp_number: '923086819634',
+  phone_number: '923086819634',
   support_email: 'dispatch@umrahtaxionline.com',
   company_name: 'Umrah Taxi Online',
   founder_name: 'Haroon Kainth',
@@ -46,20 +46,36 @@ export const DEFAULT_SETTINGS: SiteSettingsMap = {
  * Fetch all site settings as a key-value dictionary from Supabase
  */
 export async function getSiteSettings(): Promise<SiteSettingsMap> {
-  if (!isSupabaseConfigured) return DEFAULT_SETTINGS;
+  let cached: SiteSettingsMap | null = null;
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = window.localStorage.getItem('umrah_cached_site_settings');
+      if (stored) cached = JSON.parse(stored);
+    } catch (e) {}
+  }
+
+  if (!isSupabaseConfigured) return cached || DEFAULT_SETTINGS;
 
   try {
     const { data, error } = await supabase.from('site_settings').select('key, value');
-    if (error || !data || data.length === 0) return DEFAULT_SETTINGS;
+    if (error || !data || data.length === 0) return cached || DEFAULT_SETTINGS;
 
-    const map: SiteSettingsMap = { ...DEFAULT_SETTINGS };
+    const map: SiteSettingsMap = { ...(cached || DEFAULT_SETTINGS) };
     data.forEach((row: { key: string; value: string }) => {
-      map[row.key] = row.value;
+      if (row.value !== undefined && row.value !== null && row.value.trim() !== '') {
+        map[row.key] = row.value.trim();
+      }
     });
+
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.setItem('umrah_cached_site_settings', JSON.stringify(map));
+      } catch (e) {}
+    }
     return map;
   } catch (err) {
-    console.warn('Fallback to default settings:', err);
-    return DEFAULT_SETTINGS;
+    console.warn('Fallback to cached/default settings:', err);
+    return cached || DEFAULT_SETTINGS;
   }
 }
 

@@ -3,15 +3,24 @@
 import React, { useState, useEffect } from 'react';
 import { Phone, Mail, MapPin, MessageSquare, Clock, ShieldCheck } from 'lucide-react';
 import { getSiteSettings, DEFAULT_SETTINGS, SiteSettingsMap } from '@/lib/supabase/data';
+import { cleanWhatsAppNumber, openWhatsAppChat } from '@/lib/whatsapp';
 
 export function ContactContent() {
-  const [settings, setSettings] = useState<SiteSettingsMap>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<SiteSettingsMap>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = window.localStorage.getItem('umrah_cached_site_settings');
+        if (stored) return JSON.parse(stored);
+      } catch (e) {}
+    }
+    return DEFAULT_SETTINGS;
+  });
 
   useEffect(() => {
     getSiteSettings().then((s) => setSettings(s));
   }, []);
 
-  const hotline = settings.whatsapp_number || '966591206299';
+  const hotline = cleanWhatsAppNumber(settings.whatsapp_number);
   const displayPhone = settings.phone_number || '+966 59 120 6299';
   const email = settings.support_email || 'dispatch@umrahtaxionline.com';
   const hqAddress = settings.hq_address || 'Ash Shubaikah, Makkah 24231, Kingdom of Saudi Arabia';
@@ -48,9 +57,13 @@ export function ContactContent() {
               href={`https://api.whatsapp.com/send?phone=${hotline}&text=${encodeURIComponent(
                 'Assalam o Alaikum, I need immediate Umrah taxi assistance.'
               )}`}
+              onClick={(e) => {
+                e.preventDefault();
+                openWhatsAppChat(hotline, 'Assalam o Alaikum, I need immediate Umrah taxi assistance.');
+              }}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-3 px-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-center text-sm font-bold flex items-center justify-center gap-2 transition-colors"
+              className="w-full py-3 px-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-center text-sm font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
               <MessageSquare className="w-4 h-4 fill-current" />
               Chat on WhatsApp Now

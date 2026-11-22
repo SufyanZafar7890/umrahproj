@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Phone, MessageSquare, Menu, X, ShieldCheck } from 'lucide-react';
 import { getSiteSettings } from '@/lib/supabase/data';
+import { cleanWhatsAppNumber, openWhatsAppChat } from '@/lib/whatsapp';
 
 interface NavbarProps {
   hotline?: string;
@@ -17,7 +18,20 @@ export function Navbar({
   tgaText: propTgaText,
 }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [hotline, setHotline] = useState(propHotline || '966591206299');
+  const [hotline, setHotline] = useState<string>(() => {
+    if (propHotline) return cleanWhatsAppNumber(propHotline);
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = window.localStorage.getItem('umrah_cached_site_settings');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.whatsapp_number) return cleanWhatsAppNumber(parsed.whatsapp_number);
+        }
+      } catch (e) {}
+    }
+    return '923086819634';
+  });
+
   const [companyName, setCompanyName] = useState(propCompanyName || 'Umrah Taxi Online');
   const [tgaText, setTgaText] = useState(
     propTgaText || 'Saudi TGA Compliant Chauffeurs • 0 Advance Payment • Free Miqat Stopover'
@@ -25,10 +39,21 @@ export function Navbar({
 
   useEffect(() => {
     getSiteSettings().then((s) => {
-      if (s.whatsapp_number && !propHotline) setHotline(s.whatsapp_number);
+      if (s.whatsapp_number && !propHotline) setHotline(cleanWhatsAppNumber(s.whatsapp_number));
       if (s.company_name && !propCompanyName) setCompanyName(s.company_name);
       if (s.tga_compliance_text && !propTgaText) setTgaText(s.tga_compliance_text);
     });
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'umrah_cached_site_settings' && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (parsed.whatsapp_number && !propHotline) setHotline(cleanWhatsAppNumber(parsed.whatsapp_number));
+        } catch (err) {}
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   }, [propHotline, propCompanyName, propTgaText]);
 
   return (
@@ -89,9 +114,13 @@ export function Navbar({
               href={`https://api.whatsapp.com/send?phone=${hotline}&text=${encodeURIComponent(
                 'Assalam o Alaikum, I would like to inquire about Umrah Taxi service.'
               )}`}
+              onClick={(e) => {
+                e.preventDefault();
+                openWhatsAppChat(hotline, 'Assalam o Alaikum, I would like to inquire about Umrah Taxi service.');
+              }}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 shadow-sm transition-all"
+              className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 shadow-sm transition-all cursor-pointer"
             >
               <MessageSquare className="w-3.5 h-3.5 fill-current" />
               WhatsApp 24/7
@@ -156,9 +185,13 @@ export function Navbar({
               href={`https://api.whatsapp.com/send?phone=${hotline}&text=${encodeURIComponent(
                 'Assalam o Alaikum, I would like to inquire about Umrah Taxi service.'
               )}`}
+              onClick={(e) => {
+                e.preventDefault();
+                openWhatsAppChat(hotline, 'Assalam o Alaikum, I would like to inquire about Umrah Taxi service.');
+              }}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full text-center py-2.5 bg-emerald-600 text-white font-bold rounded-lg text-sm flex items-center justify-center gap-2"
+              className="w-full text-center py-2.5 bg-emerald-600 text-white font-bold rounded-lg text-sm flex items-center justify-center gap-2 cursor-pointer"
             >
               <MessageSquare className="w-4 h-4 fill-current" />
               Chat on WhatsApp

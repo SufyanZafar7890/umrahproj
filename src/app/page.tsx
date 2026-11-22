@@ -9,6 +9,7 @@ import {
   getTestimonials,
   getFAQs,
   DEFAULT_SETTINGS,
+  SiteSettingsMap,
 } from '@/lib/supabase/data';
 import { MOCK_ROUTES, MOCK_VEHICLES } from '@/data/mockData';
 import {
@@ -27,7 +28,15 @@ import { FAQSection } from '@/components/FAQSection';
 import { ShieldCheck, Star, Clock, Sparkles } from 'lucide-react';
 
 export default function HomePage() {
-  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<SiteSettingsMap>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = window.localStorage.getItem('umrah_cached_site_settings');
+        if (stored) return JSON.parse(stored);
+      } catch (e) {}
+    }
+    return DEFAULT_SETTINGS;
+  });
   const [vehicles, setVehicles] = useState<Vehicle[]>(MOCK_VEHICLES);
   const [routes, setRoutes] = useState<Route[]>(MOCK_ROUTES);
   const [pricing, setPricing] = useState<RoutePricing[]>([]);
