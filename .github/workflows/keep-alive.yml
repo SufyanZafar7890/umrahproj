@@ -14,6 +14,34 @@ jobs:
     name: Ping Cloudflare Worker & Supabase
     runs-on: ubuntu-latest
     steps:
+      - name: Ping Customer Website & Cloudflare Edge
+        run: |
+          echo "=================================================="
+          echo "Executing Anti-Sleep Ping to Customer Website..."
+          echo "Timestamp: $(date -u)"
+          
+          WEB_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -I https://umrah-taxi-web.pages.dev/)
+          echo "Customer Site Response Status Code: $WEB_RESPONSE"
+          if [ "$WEB_RESPONSE" -eq 200 ]; then
+            echo "✅ Customer Website (umrah-taxi-web) is ALIVE and WARM!"
+          else
+            echo "⚠️ Customer Website returned status: $WEB_RESPONSE"
+          fi
+
+      - name: Ping Admin Operations Portal
+        run: |
+          echo "=================================================="
+          echo "Executing Anti-Sleep Ping to Admin Portal..."
+          echo "Timestamp: $(date -u)"
+          
+          ADMIN_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -I https://umrah-taxi-admin.pages.dev/)
+          echo "Admin Portal Response Status Code: $ADMIN_RESPONSE"
+          if [ "$ADMIN_RESPONSE" -eq 200 ]; then
+            echo "✅ Admin Portal (umrah-taxi-admin) is ALIVE and WARM!"
+          else
+            echo "⚠️ Admin Portal returned status: $ADMIN_RESPONSE"
+          fi
+
       - name: Ping Cloudflare Worker Keep-Alive Endpoint
         run: |
           echo "=================================================="
@@ -36,7 +64,6 @@ jobs:
           echo "Executing Anti-Pause Ping to Supabase PostgreSQL..."
           echo "Timestamp: $(date -u)"
           
-          # Pinging the Supabase REST endpoint keeps the project awake and prevents 7-day auto-pause
           SB_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -I https://lbfmxgnxihujjcrzhjzn.supabase.co/rest/v1/)
           echo "Supabase Response Status Code: $SB_RESPONSE"
           

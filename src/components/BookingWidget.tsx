@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Vehicle, RoutePricing } from '@/types/database';
 import { constructWhatsAppLink } from '@/lib/whatsapp';
+import { getSiteSettings } from '@/lib/supabase/data';
 import {
   MapPin,
   Calendar,
@@ -13,6 +14,7 @@ import {
   Sparkles,
   CheckCircle2,
   Clock,
+  Loader2,
 } from 'lucide-react';
 
 interface BookingWidgetProps {
@@ -110,6 +112,17 @@ export function BookingWidget({
         }),
       }).catch((err) => console.warn('Lead logging skipped:', err));
 
+      // Fetch latest updated WhatsApp number dynamically from Supabase
+      let activeWhatsapp = whatsappNumber;
+      try {
+        const latestSettings = await getSiteSettings();
+        if (latestSettings?.whatsapp_number) {
+          activeWhatsapp = latestSettings.whatsapp_number;
+        }
+      } catch (err) {
+        console.warn('Fallback to prop whatsapp number:', err);
+      }
+
       // 2. Build WhatsApp intent URL using dynamic settings
       const whatsappUrl = constructWhatsAppLink({
         routeTitle: selectedRoute.title,
@@ -118,7 +131,7 @@ export function BookingWidget({
         luggage,
         vehicleName: selectedVehicle?.name,
         estimatedPriceSar: calculatedFare,
-        phoneDispatch: whatsappNumber,
+        phoneDispatch: activeWhatsapp,
       });
 
       // 3. Open WhatsApp dispatch
@@ -320,10 +333,19 @@ export function BookingWidget({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold text-sm sm:text-base shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-3 transition-all cursor-pointer disabled:opacity-60"
+          className="w-full py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold text-sm sm:text-base shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-3 transition-all cursor-pointer disabled:opacity-75 disabled:cursor-wait"
         >
-          <MessageSquare className="w-5 h-5 fill-current" />
-          <span>{isSubmitting ? 'Connecting Dispatch...' : 'BOOK VIA WHATSAPP (INSTANT CONFIRMATION)'}</span>
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Connecting Dispatch Chauffeur...</span>
+            </>
+          ) : (
+            <>
+              <MessageSquare className="w-5 h-5 fill-current" />
+              <span>BOOK VIA WHATSAPP (INSTANT CONFIRMATION)</span>
+            </>
+          )}
         </button>
 
         <p className="text-[11px] text-center text-gray-500 flex items-center justify-center gap-1">

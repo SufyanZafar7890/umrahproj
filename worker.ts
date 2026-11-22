@@ -116,15 +116,19 @@ export default {
     console.log(`[Keep-Alive Cron Trigger] Fired at ${timeStr} (Pattern: ${event.cron})`);
 
     const runKeepAlive = async () => {
-      const siteUrl = env.SITE_URL || 'https://umrah-taxi-web.umrahproj.workers.dev';
+      const siteUrl = env.SITE_URL || 'https://umrah-taxi-web.pages.dev';
+      const adminUrl = 'https://umrah-taxi-admin.pages.dev';
       const supabaseUrl = env.SUPABASE_URL || 'https://lbfmxgnxihujjcrzhjzn.supabase.co';
 
       try {
-        // 1. Keep Worker and CDN edge cache warm
-        await fetch(`${siteUrl}/api/health`, { headers: { 'User-Agent': 'Cloudflare-Cron-KeepAlive' } });
-        // 2. Keep Supabase database active to prevent auto-pause
-        await fetch(`${supabaseUrl}/rest/v1/`, { method: 'HEAD', headers: { 'User-Agent': 'Cloudflare-Cron-KeepAlive' } });
-        console.log('[Keep-Alive Cron] Successfully pinged Worker and Supabase!');
+        // 1. Keep Worker, Customer site, and Admin portal CDN warm
+        await Promise.allSettled([
+          fetch(siteUrl, { headers: { 'User-Agent': 'Cloudflare-Cron-KeepAlive' } }),
+          fetch(adminUrl, { headers: { 'User-Agent': 'Cloudflare-Cron-KeepAlive' } }),
+          // 2. Keep Supabase database active to prevent auto-pause
+          fetch(`${supabaseUrl}/rest/v1/`, { method: 'HEAD', headers: { 'User-Agent': 'Cloudflare-Cron-KeepAlive' } }),
+        ]);
+        console.log('[Keep-Alive Cron] Successfully pinged Customer Site, Admin Portal, and Supabase!');
       } catch (err: any) {
         console.log(`[Keep-Alive Cron] Note: ${err.message}`);
       }
