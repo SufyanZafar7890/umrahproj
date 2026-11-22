@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Phone, MessageSquare, Menu, X, ShieldCheck } from 'lucide-react';
+import { getSiteSettings } from '@/lib/supabase/data';
 
 interface NavbarProps {
   hotline?: string;
@@ -11,11 +12,24 @@ interface NavbarProps {
 }
 
 export function Navbar({
-  hotline = '966591206299',
-  companyName = 'Umrah Taxi Online',
-  tgaText = 'Saudi TGA Compliant Chauffeurs • 0 Advance Payment • Free Miqat Stopover',
+  hotline: propHotline,
+  companyName: propCompanyName,
+  tgaText: propTgaText,
 }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [hotline, setHotline] = useState(propHotline || '966591206299');
+  const [companyName, setCompanyName] = useState(propCompanyName || 'Umrah Taxi Online');
+  const [tgaText, setTgaText] = useState(
+    propTgaText || 'Saudi TGA Compliant Chauffeurs • 0 Advance Payment • Free Miqat Stopover'
+  );
+
+  useEffect(() => {
+    getSiteSettings().then((s) => {
+      if (s.whatsapp_number && !propHotline) setHotline(s.whatsapp_number);
+      if (s.company_name && !propCompanyName) setCompanyName(s.company_name);
+      if (s.tga_compliance_text && !propTgaText) setTgaText(s.tga_compliance_text);
+    });
+  }, [propHotline, propCompanyName, propTgaText]);
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-xs">

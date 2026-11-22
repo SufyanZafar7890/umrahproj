@@ -1,11 +1,30 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Vehicle } from '@/types/database';
 import { Users, Briefcase, Check, MessageSquare } from 'lucide-react';
 import { constructWhatsAppLink } from '@/lib/whatsapp';
+import { getSiteSettings } from '@/lib/supabase/data';
 
-export function FleetSection({ vehicles }: { vehicles: Vehicle[] }) {
+export function FleetSection({
+  vehicles,
+  whatsappNumber: propNumber,
+}: {
+  vehicles: Vehicle[];
+  whatsappNumber?: string;
+}) {
+  const [activeNumber, setActiveNumber] = useState(propNumber || '966591206299');
+
+  useEffect(() => {
+    if (propNumber) {
+      setActiveNumber(propNumber);
+    } else {
+      getSiteSettings().then((s) => {
+        if (s.whatsapp_number) setActiveNumber(s.whatsapp_number);
+      });
+    }
+  }, [propNumber]);
+
   const handleDirectVehicleBooking = (vehicle: Vehicle) => {
     const url = constructWhatsAppLink({
       routeTitle: 'Pilgrim Transfer Inquiry',
@@ -13,6 +32,7 @@ export function FleetSection({ vehicles }: { vehicles: Vehicle[] }) {
       passengers: vehicle.max_passengers,
       luggage: vehicle.max_luggage,
       vehicleName: vehicle.name,
+      phoneDispatch: activeNumber,
     });
     window.open(url, '_blank', 'noopener,noreferrer');
   };

@@ -1,11 +1,30 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Route } from '@/types/database';
 import { MapPin, ArrowRight, Clock, ShieldCheck, MessageSquare } from 'lucide-react';
 import { constructWhatsAppLink } from '@/lib/whatsapp';
+import { getSiteSettings } from '@/lib/supabase/data';
 
-export function RoutesSection({ routes }: { routes: Route[] }) {
+export function RoutesSection({
+  routes,
+  whatsappNumber: propNumber,
+}: {
+  routes: Route[];
+  whatsappNumber?: string;
+}) {
+  const [activeNumber, setActiveNumber] = useState(propNumber || '966591206299');
+
+  useEffect(() => {
+    if (propNumber) {
+      setActiveNumber(propNumber);
+    } else {
+      getSiteSettings().then((s) => {
+        if (s.whatsapp_number) setActiveNumber(s.whatsapp_number);
+      });
+    }
+  }, [propNumber]);
+
   const handleRouteBook = (route: Route) => {
     const url = constructWhatsAppLink({
       routeTitle: route.title,
@@ -13,6 +32,7 @@ export function RoutesSection({ routes }: { routes: Route[] }) {
       passengers: 2,
       luggage: 2,
       estimatedPriceSar: route.base_price_sar,
+      phoneDispatch: activeNumber,
     });
     window.open(url, '_blank', 'noopener,noreferrer');
   };

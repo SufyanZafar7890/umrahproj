@@ -130,10 +130,10 @@ export default function HomePage() {
       <TrustFeatures />
 
       {/* Dynamic Fleet Section */}
-      <FleetSection vehicles={vehicles} />
+      <FleetSection vehicles={vehicles} whatsappNumber={settings.whatsapp_number} />
 
       {/* Dynamic Routes & Pricing */}
-      <RoutesSection routes={routes} />
+      <RoutesSection routes={routes} whatsappNumber={settings.whatsapp_number} />
 
       {/* Dynamic Reviews & Social Proof */}
       <TestimonialsSection testimonials={testimonials} />

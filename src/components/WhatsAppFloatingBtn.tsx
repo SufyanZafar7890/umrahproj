@@ -1,9 +1,22 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MessageSquare } from 'lucide-react';
+import { getSiteSettings } from '@/lib/supabase/data';
 
-export function WhatsAppFloatingBtn({ hotline = '966591206299' }: { hotline?: string }) {
+export function WhatsAppFloatingBtn({ hotline }: { hotline?: string }) {
+  const [activeNumber, setActiveNumber] = useState(hotline || '966591206299');
+
+  useEffect(() => {
+    if (hotline) {
+      setActiveNumber(hotline);
+    } else {
+      getSiteSettings().then((s) => {
+        if (s.whatsapp_number) setActiveNumber(s.whatsapp_number);
+      });
+    }
+  }, [hotline]);
+
   const defaultText = encodeURIComponent(
     'Assalam o Alaikum! I need Umrah taxi transfer assistance.'
   );
@@ -11,7 +24,7 @@ export function WhatsAppFloatingBtn({ hotline = '966591206299' }: { hotline?: st
   return (
     <aside aria-label="Customer support" className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
       <a
-        href={`https://api.whatsapp.com/send?phone=${hotline}&text=${defaultText}`}
+        href={`https://api.whatsapp.com/send?phone=${activeNumber}&text=${defaultText}`}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Direct WhatsApp Booking Chat"
