@@ -2,8 +2,8 @@ name: Anti-Sleep KeepAlive Cron
 
 on:
   schedule:
-    # Runs every 5 minutes automatically 24/7/365 in GitHub Cloud
-    - cron: '*/5 * * * *'
+    # Runs every 12 hours (00:00 and 12:00 UTC) to prevent Supabase & Worker sleep with minimal load
+    - cron: '0 */12 * * *'
   workflow_dispatch: # Allows manual trigger from GitHub UI
   push:
     branches:
