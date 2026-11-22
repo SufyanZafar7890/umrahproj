@@ -1,0 +1,190 @@
+import { Vehicle, Route } from '@/types/database';
+
+export const MOCK_ROUTES: Route[] = [
+  {
+    id: 'r1',
+    slug: 'jeddah-airport-to-makkah-hotel',
+    title: 'Jeddah Airport (KAIA) to Makkah Hotel',
+    origin_city: 'Jeddah',
+    destination_city: 'Makkah',
+    distance_km: 95,
+    duration_mins: 75,
+    is_popular: true,
+    base_price_sar: 250,
+    is_active: true,
+  },
+  {
+    id: 'r2',
+    slug: 'makkah-hotel-to-madinah-hotel',
+    title: 'Makkah Hotel to Madinah Hotel',
+    origin_city: 'Makkah',
+    destination_city: 'Madinah',
+    distance_km: 435,
+    duration_mins: 270,
+    is_popular: true,
+    base_price_sar: 500,
+    is_active: true,
+  },
+  {
+    id: 'r3',
+    slug: 'madinah-hotel-to-madinah-airport',
+    title: 'Madinah Hotel to Madinah Airport (MED)',
+    origin_city: 'Madinah',
+    destination_city: 'Madinah Airport',
+    distance_km: 25,
+    duration_mins: 30,
+    is_popular: true,
+    base_price_sar: 150,
+    is_active: true,
+  },
+  {
+    id: 'r4',
+    slug: 'makkah-ziyarat-tour',
+    title: 'Makkah Full Day Ziyarat Tour',
+    origin_city: 'Makkah',
+    destination_city: 'Makkah Holy Sites',
+    distance_km: 60,
+    duration_mins: 180,
+    is_popular: true,
+    base_price_sar: 250,
+    is_active: true,
+  },
+  {
+    id: 'r5',
+    slug: 'madinah-ziyarat-tour',
+    title: 'Madinah Full Day Ziyarat Tour',
+    origin_city: 'Madinah',
+    destination_city: 'Madinah Holy Sites',
+    distance_km: 50,
+    duration_mins: 180,
+    is_popular: false,
+    base_price_sar: 250,
+    is_active: true,
+  },
+  {
+    id: 'r6',
+    slug: 'makkah-to-jeddah-airport',
+    title: 'Makkah Hotel to Jeddah Airport (KAIA)',
+    origin_city: 'Makkah',
+    destination_city: 'Jeddah',
+    distance_km: 95,
+    duration_mins: 75,
+    is_popular: true,
+    base_price_sar: 250,
+    is_active: true,
+  },
+  {
+    id: 'r7',
+    slug: 'makkah-to-taif-day-trip',
+    title: 'Makkah to Taif Mountain Day Excursion',
+    origin_city: 'Makkah',
+    destination_city: 'Taif',
+    distance_km: 110,
+    duration_mins: 90,
+    is_popular: false,
+    base_price_sar: 450,
+    is_active: true,
+  },
+  {
+    id: 'r8',
+    slug: 'madinah-to-makkah-direct',
+    title: 'Madinah Hotel to Makkah Hotel (via Abyar Ali Miqat)',
+    origin_city: 'Madinah',
+    destination_city: 'Makkah',
+    distance_km: 435,
+    duration_mins: 280,
+    is_popular: true,
+    base_price_sar: 500,
+    is_active: true,
+  }
+];
+
+export const MOCK_VEHICLES: Vehicle[] = [
+  {
+    id: 'v1',
+    name: 'Toyota Camry (Sedan)',
+    category: 'Sedan',
+    max_passengers: 4,
+    max_luggage: 2,
+    image_url: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=600&q=80',
+    features: ['Air Conditioned', 'Dual Airbags', 'Spacious Legroom', 'Complimentary Bottled Water'],
+    is_active: true,
+  },
+  {
+    id: 'v2',
+    name: 'Hyundai Staria (Family MPV)',
+    category: 'MPV',
+    max_passengers: 7,
+    max_luggage: 5,
+    image_url: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80',
+    features: ['Captain Seats', 'Dual Zone Climate Control', 'High Roof', 'Extra Luggage Deck'],
+    is_active: true,
+  },
+  {
+    id: 'v3',
+    name: 'Toyota HiAce (Group Van)',
+    category: 'Minibus',
+    max_passengers: 10,
+    max_luggage: 8,
+    image_url: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=600&q=80',
+    features: ['High Ceiling', 'Individual Rear AC Vents', 'Family Group Seating', 'Ample Bag Capacity'],
+    is_active: true,
+  },
+  {
+    id: 'v4',
+    name: 'GMC Yukon XL (VIP Luxury)',
+    category: 'VIP SUV',
+    max_passengers: 7,
+    max_luggage: 6,
+    image_url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80',
+    features: ['VIP Executive Leather', 'Privacy Tint', 'Ultra Smooth Ride', 'Premium Chauffeur Service'],
+    is_active: true,
+  }
+];
+
+export const FAQ_ITEMS = [
+  {
+    q: 'Do I need to pay any advance deposit before arrival?',
+    a: 'No! We operate on a 100% Zero Advance Deposit policy. You settle the full fare in cash (SAR, USD, GBP) or card directly with your chauffeur upon safe arrival at your destination hotel.',
+  },
+  {
+    q: 'What happens if my flight to Jeddah or Madinah is delayed?',
+    a: 'We monitor all flights in real-time via radar dispatch. Even if your flight is delayed by several hours, your chauffeur will be waiting outside the terminal with no extra penalty charges.',
+  },
+  {
+    q: 'Is there a stop at the Miqat for Ihram included in the fare?',
+    a: 'Yes, absolutely. For all transfers from Madinah to Makkah or other applicable routes, a complimentary stopover at the designated Miqat station (such as Abyar Ali or Masjid Aisha) is fully included.',
+  },
+  {
+    q: 'Are tolls, taxes, and airport parking fees included in the fare?',
+    a: 'Yes. All quoted prices are 100% all-inclusive. You will never encounter hidden tolls, parking fees, or surge pricing on the Haramain Expressway.',
+  },
+  {
+    q: 'How fast do you dispatch after WhatsApp booking?',
+    a: 'Our dispatch team is operational 24 hours a day, 7 days a week with an average initial response SLA of 1 to 2 minutes on WhatsApp.',
+  }
+];
+
+export const TESTIMONIALS = [
+  {
+    name: 'Tariq Al-Mansoor',
+    country: 'United Kingdom',
+    rating: 5,
+    date: 'February 2026',
+    comment: 'Alhamdulillah exceptional service! Landed at Terminal 1 Jeddah, chauffeur was waiting with a sign. The car was spotless and stopped at Miqat patiently. Zero advance fee gave total peace of mind.',
+  },
+  {
+    name: 'Brother Farhan & Family',
+    country: 'Canada',
+    rating: 5,
+    date: 'January 2026',
+    comment: 'Booked Hyundai Staria for our family of 6 with 6 large bags. Excellent driver, courteous and safe driving on the Makkah-Madinah highway. Paid driver in cash in Madinah.',
+  },
+  {
+    name: 'Haji Muhammad Rizwan',
+    country: 'Pakistan',
+    rating: 5,
+    date: 'February 2026',
+    comment: 'Best Umrah transport service in Saudi Arabia. Very fast WhatsApp response within 2 minutes. The price was fixed with zero hidden charges. Highly recommended for families.',
+  }
+];
