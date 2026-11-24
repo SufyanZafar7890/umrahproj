@@ -217,6 +217,7 @@ export function BookingWidget({
             type="date"
             min={minDate}
             value={travelDate}
+            placeholder="Select journey date"
             onChange={(e) => setTravelDate(e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 font-semibold text-gray-800 text-sm"
             required
@@ -292,14 +293,14 @@ export function BookingWidget({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 pt-3 border-t border-gray-100">
               <input
                 type="text"
-                placeholder="Pilgrim Full Name"
+                placeholder="Pilgrim Full Name (e.g. Haji Muhammad Ali)"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 className="px-3 py-2 rounded-xl border border-gray-200 text-xs text-gray-800"
               />
               <input
                 type="text"
-                placeholder="Flight No. (e.g., SV732)"
+                placeholder="Flight Code (e.g. SV-732 or PK-741)"
                 value={flightNumber}
                 onChange={(e) => setFlightNumber(e.target.value)}
                 className="px-3 py-2 rounded-xl border border-gray-200 text-xs text-gray-800 uppercase"

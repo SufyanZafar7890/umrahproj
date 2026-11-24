@@ -25,6 +25,13 @@ export interface SiteSettingsMap {
   tga_compliance_text: string;
   hero_heading: string;
   hero_subheading: string;
+  about_mission_title: string;
+  about_mission_text: string;
+  about_story_title: string;
+  about_story_text_1: string;
+  about_story_text_2: string;
+  about_stat_drivers: string;
+  about_stat_pilgrims: string;
   [key: string]: string;
 }
 
@@ -33,13 +40,23 @@ export const DEFAULT_SETTINGS: SiteSettingsMap = {
   phone_number: '923160424995',
   support_email: 'dispatch@umrahtaxionline.com',
   company_name: 'Umrah Taxi Online',
-  founder_name: 'Haroon Kainth',
+  founder_name: 'Sufyan Zafar',
   hq_address: 'Ash Shubaikah, Makkah 24231, Kingdom of Saudi Arabia',
   sla_response_time: '1 – 2 Minutes',
   tga_compliance_text: 'Saudi Transport General Authority (TGA) Compliant Chauffeur Network',
   hero_heading: 'Private Umrah Taxi With Zero Advance Deposit',
   hero_subheading:
     'Pre-book your sanitized private chauffeur for Jeddah Airport (KAIA), Makkah, and Madinah transfers. Pay on safe arrival at your hotel with 100% fixed fares, radar flight delay tracking, and free Miqat stopover.',
+  about_mission_title: 'Serving the Guests of Allah',
+  about_mission_text:
+    'Headquartered in Ash Shubaikah, Makkah, adjacent to the Holy Mosque, Umrah Taxi Online was founded to eliminate the anxiety and price gouging international pilgrims encounter upon landing in Saudi Arabia.',
+  about_story_title: 'Our Founding Story',
+  about_story_text_1:
+    'Founded by Sufyan Zafar, Umrah Taxi Online started with a simple belief: pilgrims arriving from long international flights deserve peace of mind, honest upfront pricing, and hospitable chauffeurs who understand the sanctity of their journey.',
+  about_story_text_2:
+    'Unlike automated ride apps that apply high surge pricing during peak Ramadan and Hajj seasons or cancel on passengers with heavy luggage, our service operates with pre-scheduled, guaranteed commercial drivers and fixed all-inclusive fares.',
+  about_stat_drivers: '50+',
+  about_stat_pilgrims: '10,000+',
 };
 
 /**
