@@ -38,7 +38,7 @@ export interface SiteSettingsMap {
 export const DEFAULT_SETTINGS: SiteSettingsMap = {
   whatsapp_number: '923160424995',
   phone_number: '923160424995',
-  support_email: 'dispatch@umrahtaxionline.com',
+  support_email: 'dispatch@makkahmadinahziyarat.com',
   company_name: 'Umrah Taxi Online',
   founder_name: 'Sufyan Zafar',
   hq_address: 'Ash Shubaikah, Makkah 24231, Kingdom of Saudi Arabia',

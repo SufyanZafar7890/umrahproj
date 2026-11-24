@@ -22,7 +22,7 @@ export function ContactContent() {
 
   const hotline = cleanWhatsAppNumber(settings.whatsapp_number);
   const displayPhone = settings.phone_number || '+966 59 120 6299';
-  const email = settings.support_email || 'dispatch@umrahtaxionline.com';
+  const email = settings.support_email || 'dispatch@makkahmadinahziyarat.com';
   const hqAddress = settings.hq_address || 'Ash Shubaikah, Makkah 24231, Kingdom of Saudi Arabia';
 
   return (

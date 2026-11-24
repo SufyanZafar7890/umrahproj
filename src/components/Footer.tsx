@@ -36,7 +36,7 @@ export function Footer({
   const [address, setAddress] = useState(
     propAddress || 'Ash Shubaikah, Makkah 24231, Kingdom of Saudi Arabia (Near Haram)'
   );
-  const [email, setEmail] = useState(propEmail || 'dispatch@umrahtaxionline.com');
+  const [email, setEmail] = useState(propEmail || 'dispatch@makkahmadinahziyarat.com');
   const [companyName, setCompanyName] = useState(propCompanyName || 'Umrah Taxi Online');
 
   useEffect(() => {

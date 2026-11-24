@@ -18,10 +18,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Umrah Taxi Online | Private Pilgrim Chauffeurs in Makkah & Madinah',
+  metadataBase: new URL('https://makkahmadinahziyarat.com'),
+  title: 'Makkah Madinah Ziyarat & Umrah Taxi | Private Pilgrim Chauffeurs',
   description:
-    'Reliable, fixed-price private Umrah and Hajj taxi transfers between Jeddah Airport (KAIA), Makkah, and Madinah. Zero advance deposit, free Miqat stopover, and flight delay monitoring.',
+    'Reliable, fixed-price private Umrah, Hajj and Ziyarat taxi transfers between Jeddah Airport (KAIA), Makkah, and Madinah. Zero advance deposit, free Miqat stopover, and flight delay monitoring.',
   keywords: [
+    'Makkah Madinah Ziyarat',
+    'Makkah Ziyarat Taxi',
+    'Madinah Ziyarat Taxi',
     'Umrah Taxi',
     'Jeddah Airport to Makkah Taxi',
     'Makkah to Madinah Taxi',
@@ -29,11 +33,14 @@ export const metadata: Metadata = {
     'Pilgrim Private Chauffeur',
     'Miqat Stop Taxi'
   ],
+  alternates: {
+    canonical: 'https://makkahmadinahziyarat.com',
+  },
   openGraph: {
-    title: 'Umrah Taxi Online | Private Pilgrim Transfers',
+    title: 'Makkah Madinah Ziyarat & Umrah Taxi | Private Transfers',
     description: 'Zero advance deposit, 100% fixed fares, radar flight monitoring, and complimentary Miqat stopover.',
-    url: 'https://umrahtaxionline.com',
-    siteName: 'Umrah Taxi Online',
+    url: 'https://makkahmadinahziyarat.com',
+    siteName: 'Makkah Madinah Ziyarat',
     locale: 'en_US',
     type: 'website',
   },
