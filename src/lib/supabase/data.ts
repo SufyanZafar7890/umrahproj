@@ -29,8 +29,8 @@ export interface SiteSettingsMap {
 }
 
 export const DEFAULT_SETTINGS: SiteSettingsMap = {
-  whatsapp_number: '923086819634',
-  phone_number: '923086819634',
+  whatsapp_number: '923160424995',
+  phone_number: '923160424995',
   support_email: 'dispatch@umrahtaxionline.com',
   company_name: 'Umrah Taxi Online',
   founder_name: 'Haroon Kainth',

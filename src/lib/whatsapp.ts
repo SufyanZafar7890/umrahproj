@@ -9,13 +9,13 @@ export interface WhatsAppBookingPayload {
 }
 
 export function cleanWhatsAppNumber(num?: string): string {
-  if (!num) return '923086819634';
+  if (!num) return '923160424995';
   const cleaned = num.replace(/[^0-9]/g, '');
-  return cleaned || '923086819634';
+  return cleaned || '923160424995';
 }
 
 export function constructWhatsAppLink(payload: WhatsAppBookingPayload): string {
-  const rawPhone = payload.phoneDispatch || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '923086819634';
+  const rawPhone = payload.phoneDispatch || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '923160424995';
   const phone = cleanWhatsAppNumber(rawPhone);
 
   const lines = [
@@ -49,7 +49,24 @@ export function constructWhatsAppLink(payload: WhatsAppBookingPayload): string {
 }
 
 export function openWhatsAppChat(phone?: string, text?: string) {
-  const targetPhone = cleanWhatsAppNumber(phone);
+  let targetPhone = phone ? cleanWhatsAppNumber(phone) : '';
+  if (!targetPhone || targetPhone === '923086819634') {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored =
+          window.localStorage.getItem('umrah_cached_site_settings') ||
+          window.localStorage.getItem('umrah_site_settings_cache');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.whatsapp_number) {
+            targetPhone = cleanWhatsAppNumber(parsed.whatsapp_number);
+          }
+        }
+      } catch (e) {}
+    }
+  }
+  if (!targetPhone) targetPhone = '923160424995';
+
   const defaultText = text || 'Assalam o Alaikum! I would like to inquire about Umrah Taxi service.';
   const encodedText = encodeURIComponent(defaultText);
 
